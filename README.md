@@ -4,7 +4,7 @@ A tiny landing page for people who run more than one [OctoPrint](https://octopri
 
 This is not an OctoFarm replacement. There's no backend, no database, and no build step. It's a static page with one config file, in the spirit of [Homer](https://github.com/bastienwirtz/homer).
 
-![OctoHub screenshot](docs/screenshot.png)
+![OctoHub screenshot](docs/screenshot-main.png)
 
 ## Setup
 
