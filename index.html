@@ -1,0 +1,204 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="theme-color" content="#11131a">
+<title>OctoHub - 3D Printer Dashboard</title>
+<link rel="icon" type="image/png" href="assets/logo.png">
+<style>
+:root{--line:#414353;--text:#f4f5fb;--muted:#b5b9cc;--accent:#aebdff}
+*{box-sizing:border-box}
+body{margin:0;background:#303339;color:var(--text);font:16px/1.5 Inter,ui-sans-serif,system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;min-height:100vh}
+.wrap{width:min(1100px,calc(100% - 36px));margin:auto;padding:42px 0 28px}
+
+header{margin-bottom:52px}
+.brand{display:flex;align-items:center;gap:14px}
+.logo{width:48px;height:48px;border:1px solid #414866;background:linear-gradient(145deg,#282f4a,#171a26);border-radius:15px;display:grid;place-items:center}
+h1{letter-spacing:-.045em;margin:0}
+
+.printers{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:20px;padding-bottom:40px}
+.card{--printer:var(--accent);position:relative;overflow:hidden;display:flex;flex-direction:column;min-height:200px;padding:48px 24px 24px 48px;border:1px solid var(--line);border-radius:22px;background:linear-gradient(155deg,#202432 0%,#171a23 70%);color:inherit;text-decoration:none;transition:border-color .15s}
+.card:before{content:"";position:absolute;inset:0 0 auto;height:4px;background:var(--printer)}
+.card:hover{border-color:color-mix(in srgb,var(--printer) 55%,var(--line))}
+.card:focus-visible{outline:3px solid var(--accent);outline-offset:3px}
+.name{font-size:1.8rem;letter-spacing:-.04em;margin:0 0 2px}
+.colorline{display:flex;align-items:center;gap:8px;margin-top:14px;color:var(--muted);font-size:.95rem}
+.dot{width:9px;height:9px;border-radius:50%;background:var(--printer);box-shadow:0 0 14px color-mix(in srgb,var(--printer) 55%,transparent)}
+.machine-icon{position:absolute;top:29px;right:34px;width:60px;height:60px;border-radius:18px;display:grid;place-items:center;background:#ffffff08;border:1px solid #ffffff16;color:var(--printer)}
+
+.notice{grid-column:1/-1;border:1px solid var(--line);background:#ffffff04;border-radius:16px;padding:16px 18px;color:var(--muted);font-size:.9rem}
+.notice strong{display:block;color:#e9ebf7;margin-bottom:4px}
+.notice ul{margin:6px 0 0;padding-left:20px}
+.notice code{color:#e2e6ff;background:#252a3a;padding:2px 5px;border-radius:5px}
+
+footer{margin-top:28px;padding-top:38px;border-top:1px solid var(--line);color:var(--muted);font-size:.82rem}
+
+@media(max-width:700px){.wrap{padding-top:25px}.printers{grid-template-columns:1fr}header{margin-bottom:25px}}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header>
+    <div class="brand">
+      <div class="logo" aria-hidden="true">
+        <img src="assets/logo.png" width="34" height="34" alt="">
+      </div>
+      <h1 id="title">OctoHub</h1>
+    </div>
+  </header>
+
+  <main class="printers" id="printers" aria-label="Your 3D printers">
+    <noscript><div class="notice"><strong>JavaScript is off</strong>OctoHub needs JavaScript to read <code>config.yml</code>.</div></noscript>
+  </main>
+
+  <footer>A simple dashboard for your OctoPrint instances.</footer>
+</div>
+
+<template id="card-template">
+  <a class="card">
+    <h2 class="name"></h2>
+    <div class="colorline"><span class="dot"></span><span class="model"></span></div>
+    <div class="machine-icon" aria-hidden="true">
+      <svg width="34" height="34" viewBox="0 0 48 48" xmlns="http://www.w3.org/2000/svg" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M8 42V6H40V42"/><path d="M19 15H29V24H19Z"/><path d="M24 24V29"/><path d="M12 36H36"/><path d="M4 42H44"/></svg>
+    </div>
+  </a>
+</template>
+
+<script src="assets/js-yaml.min.js"></script>
+<script>
+(function () {
+  'use strict';
+
+  var grid = document.getElementById('printers');
+  var template = document.getElementById('card-template');
+
+  // ---- helpers -------------------------------------------------------------
+
+  // Shows a message box in the grid. `lines` is optional and renders as a list.
+  function notice(heading, body, lines) {
+    var box = document.createElement('div');
+    box.className = 'notice';
+    var strong = document.createElement('strong');
+    strong.textContent = heading;
+    box.appendChild(strong);
+    if (body) box.appendChild(document.createTextNode(body));
+    if (lines && lines.length) {
+      var ul = document.createElement('ul');
+      lines.forEach(function (text) {
+        var li = document.createElement('li');
+        li.textContent = text;
+        ul.appendChild(li);
+      });
+      box.appendChild(ul);
+    }
+    grid.prepend(box);
+  }
+
+  // Accepts "http://host", "https://host", or a bare "host" (assumes http://).
+  // Returns the URL exactly as typed (so #fragments etc. survive), or null.
+  function cleanUrl(raw) {
+    var s = String(raw == null ? '' : raw).trim();
+    if (!s) return null;
+    if (!/^[a-z][a-z0-9+.-]*:\/\//i.test(s)) s = 'http://' + s;
+    try {
+      var u = new URL(s);
+      return (u.protocol === 'http:' || u.protocol === 'https:') ? s : null;
+    } catch (e) {
+      return null;
+    }
+  }
+
+  function text(value) {
+    return value == null ? '' : String(value).trim();
+  }
+
+  // ---- render --------------------------------------------------------------
+
+  function render(config) {
+    if (config && config.title) {
+      var title = text(config.title);
+      document.getElementById('title').textContent = title;
+      document.title = title;
+    }
+
+    var list = config && config.printers;
+    if (!Array.isArray(list) || list.length === 0) {
+      notice('No printers yet', 'Add at least one entry under "printers:" in config.yml.');
+      return;
+    }
+
+    var problems = [];
+
+    list.forEach(function (printer, i) {
+      var slot = 'Printer #' + (i + 1);
+      if (!printer || typeof printer !== 'object') {
+        problems.push(slot + ' is not a valid entry. Each one needs a name and a url.');
+        return;
+      }
+
+      var name = text(printer.name);
+      var model = text(printer.model);
+      var url = cleanUrl(printer.url);
+
+      if (!name) { problems.push(slot + ' is missing a name.'); return; }
+      if (!url) {
+        problems.push(name + ' needs a url that starts with http:// or https://.');
+        return;
+      }
+
+      var card = template.content.firstElementChild.cloneNode(true);
+      card.href = url;
+      card.querySelector('.name').textContent = name;
+
+      if (model) {
+        card.querySelector('.model').textContent = model;
+      } else {
+        card.querySelector('.colorline').remove();
+      }
+
+      var color = text(printer.color);
+      if (color) {
+        if (window.CSS && CSS.supports('color', color)) {
+          card.style.setProperty('--printer', color);
+        } else {
+          problems.push(name + ' has a color that is not valid (' + color + '). Using the default.');
+        }
+      }
+
+      grid.appendChild(card);
+    });
+
+    if (problems.length) {
+      notice('Check config.yml', null, problems);
+    }
+  }
+
+  // ---- load ----------------------------------------------------------------
+
+  fetch('config.yml', { cache: 'no-store' })
+    .then(function (response) {
+      if (!response.ok) throw new Error('HTTP ' + response.status);
+      return response.text();
+    })
+    .then(function (source) {
+      var config;
+      try {
+        config = jsyaml.load(source);
+      } catch (err) {
+        var where = err && err.mark ? ' (line ' + (err.mark.line + 1) + ')' : '';
+        notice('config.yml is not valid YAML', (err && err.reason ? err.reason : 'Parse error') + where + '.');
+        return;
+      }
+      render(config);
+    })
+    .catch(function () {
+      notice(
+        'Could not load config.yml',
+        'Make sure it sits next to index.html. If you opened index.html straight from your computer, browsers block that. Serve the folder with a web server instead.'
+      );
+    });
+})();
+</script>
+</body>
+</html>

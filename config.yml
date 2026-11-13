@@ -1,0 +1,16 @@
+# OctoHub config
+# Edit this file, save it, and refresh the page. No rebuild needed.
+
+# Page title (optional, defaults to "OctoHub")
+title: "OctoHub"
+
+printers:
+  - name: "Blazar"                  # required
+    model: "Prusa i3 MK3S+"         # optional, shown under the name
+    url: "192.168.1.101"            # required, where the card links to
+    color: "#f05a65"                # optional, accent color for the card
+
+  - name: "Matter"
+    model: "Prusa i3 MK3S+"
+    url: "192.168.1.102"
+    color: "#b7becd"
