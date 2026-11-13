@@ -1,8 +1,8 @@
 # OctoHub
 
-A tiny landing page for people who run more than one [OctoPrint](https://octoprint.org) instance. Open one page, click the printer you want, and you're in its OctoPrint. Hit the browser's back button to pick a different one.
+A tiny landing page for people who run more than one [OctoPrint](https://octoprint.org) instance.
 
-It's not an OctoFarm replacement. There's no backend, no database, and no build step. It's a static page with one config file, in the spirit of [Homer](https://github.com/bastienwirtz/homer).
+This is not an OctoFarm replacement. There's no backend, no database, and no build step. It's a static page with one config file, in the spirit of [Homer](https://github.com/bastienwirtz/homer).
 
 ![OctoHub screenshot](docs/screenshot.png)
 
