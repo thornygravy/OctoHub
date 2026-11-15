@@ -9,7 +9,7 @@ This is not an OctoFarm replacement. There's no backend, no database, and no bui
 ## Setup
 
 1. Download or clone this repo.
-2. Edit `config.yml` with your printers.
+2. Edit `config.yaml` with your printers.
 3. Serve the folder with any web server (nginx, Apache, Caddy, Docker, a NAS, a Pi...). For a quick test:
 
    ```sh
@@ -18,9 +18,9 @@ This is not an OctoFarm replacement. There's no backend, no database, and no bui
 
    then open <http://localhost:8080>.
 
-To change anything later, edit `config.yml` and refresh the page.
+To change anything later, edit `config.yaml` and refresh the page.
 
-> **Don't just double-click `index.html`.** Browsers block pages opened from disk from reading `config.yml`, so it has to be served over http.
+> **Don't just double-click `index.html`.** Browsers block pages opened from disk from reading `config.yaml`, so it has to be served over http.
 
 ## Configuration
 
@@ -51,11 +51,11 @@ Cards appear in the same order as the list.
 
 **Tip:** the URL can point straight at a tab, for example `http://192.168.0.101/#tab_plugin_dashboard`.
 
-If something in `config.yml` is wrong (a missing name, a bad URL, a YAML typo), OctoHub shows a message at the top of the page telling you what to fix.
+If something in `config.yaml` is wrong (a missing name, a bad URL, a YAML typo), OctoHub shows a message at the top of the page telling you what to fix.
 
 ## Troubleshooting
 
-- **"Could not load config.yml"**: make sure the file sits next to `index.html` and that you're opening the page through a web server. Some servers (IIS, for example) won't serve `.yml` files until you add a MIME type for them.
+- **"Could not load config.yaml"**: make sure the file sits next to `index.html` and that you're opening the page through a web server. Some servers (IIS, for example) won't serve `.yaml` files until you add a MIME type for them.
 
 ## Maybe later
 
