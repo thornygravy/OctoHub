@@ -49,7 +49,7 @@ footer{margin-top:28px;margin-left:20px;margin-right:20px;padding-top:38px;borde
   </header>
 
   <main class="printers" id="printers" aria-label="Your 3D printers">
-    <noscript><div class="notice"><strong>JavaScript is off</strong>OctoHub needs JavaScript to read <code>config.yml</code>.</div></noscript>
+    <noscript><div class="notice"><strong>JavaScript is off</strong>OctoHub needs JavaScript to read <code>config.yaml</code>.</div></noscript>
   </main>
 
   <footer>A simple dashboard for your OctoPrint instances.</footer>
@@ -124,7 +124,7 @@ footer{margin-top:28px;margin-left:20px;margin-right:20px;padding-top:38px;borde
 
     var list = config && config.printers;
     if (!Array.isArray(list) || list.length === 0) {
-      notice('No printers yet', 'Add at least one entry under "printers:" in config.yml.');
+      notice('No printers yet', 'Add at least one entry under "printers:" in config.yaml.');
       return;
     }
 
@@ -170,13 +170,13 @@ footer{margin-top:28px;margin-left:20px;margin-right:20px;padding-top:38px;borde
     });
 
     if (problems.length) {
-      notice('Check config.yml', null, problems);
+      notice('Check config.yaml', null, problems);
     }
   }
 
   // ---- load ----------------------------------------------------------------
 
-  fetch('config.yml', { cache: 'no-store' })
+  fetch('config.yaml', { cache: 'no-store' })
     .then(function (response) {
       if (!response.ok) throw new Error('HTTP ' + response.status);
       return response.text();
@@ -187,14 +187,14 @@ footer{margin-top:28px;margin-left:20px;margin-right:20px;padding-top:38px;borde
         config = jsyaml.load(source);
       } catch (err) {
         var where = err && err.mark ? ' (line ' + (err.mark.line + 1) + ')' : '';
-        notice('config.yml is not valid YAML', (err && err.reason ? err.reason : 'Parse error') + where + '.');
+        notice('config.yaml is not valid YAML', (err && err.reason ? err.reason : 'Parse error') + where + '.');
         return;
       }
       render(config);
     })
     .catch(function () {
       notice(
-        'Could not load config.yml',
+        'Could not load config.yaml',
         'Make sure it sits next to index.html. If you opened index.html straight from your computer, browsers block that. Serve the folder with a web server instead.'
       );
     });
