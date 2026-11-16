@@ -64,3 +64,7 @@ If something in `config.yaml` is wrong (a missing name, a bad URL, a YAML typo),
 ## Credits
 
 [js-yaml](https://github.com/nodeca/js-yaml) (MIT) is bundled in `assets/` so the page works on networks with no internet access.
+
+## License
+
+[MIT](LICENSE)
