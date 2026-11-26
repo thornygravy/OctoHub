@@ -23,8 +23,7 @@ h1{letter-spacing:-.045em;margin:0}
 .card:hover{border-color:color-mix(in srgb,var(--printer) 55%,var(--line))}
 .card:focus-visible{outline:3px solid var(--accent);outline-offset:3px}
 .name{font-size:1.8rem;letter-spacing:-.04em;margin:0 0 2px}
-.colorline{display:flex;align-items:center;gap:8px;margin-top:14px;color:var(--muted);font-size:.95rem}
-.dot{width:9px;height:9px;border-radius:50%;background:var(--printer);box-shadow:0 0 14px color-mix(in srgb,var(--printer) 55%,transparent)}
+.model{margin-top:14px;color:var(--muted);font-size:.95rem}
 .machine-icon{position:absolute;top:29px;right:34px;width:60px;height:60px;border-radius:18px;display:grid;place-items:center;background:#ffffff08;border:1px solid #ffffff16;color:var(--printer)}
 
 /* Reachability row. Filled green = online, hollow ring = anything else, so it never relies on color alone. */
@@ -65,7 +64,7 @@ footer{margin-top:28px;margin-left:20px;margin-right:20px;padding-top:38px;borde
 <template id="card-template">
   <a class="card">
     <h2 class="name"></h2>
-    <div class="colorline"><span class="dot"></span><span class="model"></span></div>
+    <div class="model"></div>
     <div class="machine-icon" aria-hidden="true">
       <svg width="34" height="34" viewBox="0 0 48 48" xmlns="http://www.w3.org/2000/svg" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M8 42V6H40V42"/><path d="M19 15H29V24H19Z"/><path d="M24 24V29"/><path d="M12 36H36"/><path d="M4 42H44"/></svg>
     </div>
@@ -244,7 +243,7 @@ footer{margin-top:28px;margin-left:20px;margin-right:20px;padding-top:38px;borde
       if (model) {
         card.querySelector('.model').textContent = model;
       } else {
-        card.querySelector('.colorline').remove();
+        card.querySelector('.model').remove();
       }
 
       var color = text(printer.color);
